@@ -84,7 +84,7 @@ export interface UpdateTaskRequest {
 
 export interface MoveTaskRequest {
   column: Column
-  position: number
+  position?: number
 }
 
 export interface CreateSprintRequest {
