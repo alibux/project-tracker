@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -119,10 +119,17 @@ namespace Tracker.Api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "Tasks");
-            migrationBuilder.DropTable(name: "Sprints");
-            migrationBuilder.DropTable(name: "Settings");
-            migrationBuilder.DropTable(name: "Projects");
+            migrationBuilder.DropTable(
+                name: "Settings");
+
+            migrationBuilder.DropTable(
+                name: "Tasks");
+
+            migrationBuilder.DropTable(
+                name: "Sprints");
+
+            migrationBuilder.DropTable(
+                name: "Projects");
         }
     }
 }
