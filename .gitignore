@@ -3,6 +3,9 @@
 .env.*
 !.env.example
 
+# Local developer overrides (may contain real credentials)
+backend/Tracker.Api/appsettings.Local.json
+
 # .NET
 bin/
 obj/
