@@ -3,6 +3,9 @@ using Tracker.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load optional local overrides (gitignored — for credentials, URLs, etc.)
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false);
+
 // Add EF Core with Npgsql
 builder.Services.AddDbContext<TrackerDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("TrackerDatabase")));
