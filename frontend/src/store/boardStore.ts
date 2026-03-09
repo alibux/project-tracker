@@ -1,26 +1,27 @@
 import { create } from 'zustand'
-import type { Project, Sprint, Task, Column } from '../api/types'
+import type { Project, Sprint, Task } from '../api/types'
+
+type PartialTask = Partial<Pick<Task, 'column' | 'position'>>
 
 interface BoardState {
   // Selected project
   currentProjectId: string | null
   setCurrentProjectId: (id: string | null) => void
 
-  // Sprint filter — null means "all tasks", string means filter to that sprint
+  // Sprint filter — null means "all tasks"
   currentSprintId: string | null
   setCurrentSprintId: (id: string | null) => void
 
-  // Optimistic task state for drag-and-drop
-  tasks: Task[]
-  setTasks: (tasks: Task[]) => void
-  moveTaskOptimistic: (taskId: string, column: Column, position: number) => void
-  revertTask: (original: Task) => void
+  // Optimistic overrides keyed by task id (for drag-and-drop)
+  optimisticTasks: Record<string, PartialTask>
+  moveTaskOptimistic: (taskId: string, patch: PartialTask) => void
+  revertTask: (taskId: string) => void
+  clearOptimistic: () => void
 
-  // Projects cache
+  // Projects/sprints cache (populated by React Query hooks)
   projects: Project[]
   setProjects: (projects: Project[]) => void
 
-  // Sprints cache (for current project)
   sprints: Sprint[]
   setSprints: (sprints: Sprint[]) => void
 }
@@ -32,18 +33,18 @@ export const useBoardStore = create<BoardState>((set) => ({
   currentSprintId: null,
   setCurrentSprintId: (id) => set({ currentSprintId: id }),
 
-  tasks: [],
-  setTasks: (tasks) => set({ tasks }),
-  moveTaskOptimistic: (taskId, column, position) =>
+  optimisticTasks: {},
+  moveTaskOptimistic: (taskId, patch) =>
     set((state) => ({
-      tasks: state.tasks.map((t) =>
-        t.id === taskId ? { ...t, column, position } : t,
-      ),
+      optimisticTasks: { ...state.optimisticTasks, [taskId]: patch },
     })),
-  revertTask: (original) =>
-    set((state) => ({
-      tasks: state.tasks.map((t) => (t.id === original.id ? original : t)),
-    })),
+  revertTask: (taskId) =>
+    set((state) => {
+      const next = { ...state.optimisticTasks }
+      delete next[taskId]
+      return { optimisticTasks: next }
+    }),
+  clearOptimistic: () => set({ optimisticTasks: {} }),
 
   projects: [],
   setProjects: (projects) => set({ projects }),
