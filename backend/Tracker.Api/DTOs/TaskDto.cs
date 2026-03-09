@@ -76,6 +76,6 @@ public class MoveTaskDto
     /// <summary>Target column: Backlog | InProgress | InReview | Done.</summary>
     public string Column { get; set; } = string.Empty;
 
-    /// <summary>New position within the column.</summary>
-    public int Position { get; set; }
+    /// <summary>New position within the column. When null, task is appended to the end of the target column.</summary>
+    public int? Position { get; set; }
 }

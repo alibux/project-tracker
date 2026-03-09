@@ -201,34 +201,49 @@ public class TasksController : ControllerBase
         if (string.IsNullOrWhiteSpace(dto.Column) || !ValidColumns.Contains(dto.Column))
             return BadRequest(BuildProblem(400, "Validation failed", $"Invalid column '{dto.Column}'. Must be one of: {string.Join(", ", ValidColumns)}."));
 
-        if (dto.Position <= 0)
+        if (dto.Position.HasValue && dto.Position.Value <= 0)
             return BadRequest(BuildProblem(400, "Validation failed", "Position must be a positive integer."));
 
         var task = await _db.Tasks.FindAsync(id);
         if (task is null)
             return NotFound(BuildProblem(404, "Task not found", $"No task with id '{id}' exists."));
 
-        // Check for position collision in the target column (excluding this task)
-        var collision = await _db.Tasks.AnyAsync(t =>
-            t.Id != id &&
-            t.ProjectId == task.ProjectId &&
-            t.Column == dto.Column &&
-            t.Position == dto.Position);
-
-        if (collision)
+        // If no position supplied, append to end of target column
+        int targetPosition;
+        if (!dto.Position.HasValue)
         {
-            // Rebalance: shift all tasks at or after the desired position up by 1000
-            var tasksToShift = await _db.Tasks
-                .Where(t => t.Id != id && t.ProjectId == task.ProjectId && t.Column == dto.Column && t.Position >= dto.Position)
-                .OrderBy(t => t.Position)
-                .ToListAsync();
+            var maxPosition = await _db.Tasks
+                .Where(t => t.Id != id && t.ProjectId == task.ProjectId && t.Column == dto.Column)
+                .Select(t => (int?)t.Position)
+                .MaxAsync() ?? 0;
+            targetPosition = maxPosition + 1000;
+        }
+        else
+        {
+            targetPosition = dto.Position.Value;
 
-            foreach (var t in tasksToShift)
-                t.Position += 1000;
+            // Check for position collision in the target column (excluding this task)
+            var collision = await _db.Tasks.AnyAsync(t =>
+                t.Id != id &&
+                t.ProjectId == task.ProjectId &&
+                t.Column == dto.Column &&
+                t.Position == targetPosition);
+
+            if (collision)
+            {
+                // Rebalance: shift all tasks at or after the desired position up by 1000
+                var tasksToShift = await _db.Tasks
+                    .Where(t => t.Id != id && t.ProjectId == task.ProjectId && t.Column == dto.Column && t.Position >= targetPosition)
+                    .OrderBy(t => t.Position)
+                    .ToListAsync();
+
+                foreach (var t in tasksToShift)
+                    t.Position += 1000;
+            }
         }
 
         task.Column = dto.Column;
-        task.Position = dto.Position;
+        task.Position = targetPosition;
 
         await _db.SaveChangesAsync();
 

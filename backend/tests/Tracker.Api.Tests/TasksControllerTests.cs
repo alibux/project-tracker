@@ -257,4 +257,21 @@ public class TasksControllerTests : IDisposable
         var result = await _controller.Move(Guid.NewGuid(), new MoveTaskDto { Column = "Done", Position = 1000 });
         Assert.IsType<NotFoundObjectResult>(result);
     }
+
+    [Fact]
+    public async Task Move_WithNullPosition_AppendsToEndOfTargetColumn()
+    {
+        // Arrange: seed a project, create two tasks
+        var project = await SeedProject();
+        var task = await SeedTask(project.Id, "Task A", "InProgress");
+        var existing = await SeedTask(project.Id, "Task B", "Done"); // position 1000 in Done
+
+        // Act: move to Done without specifying position — should append at 2000
+        var result = await _controller.Move(task.Id, new MoveTaskDto { Column = "Done" });
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var moved = Assert.IsType<TaskDto>(ok.Value);
+        Assert.Equal("Done", moved.Column);
+        Assert.Equal(2000, moved.Position); // appended after existing at 1000
+    }
 }
