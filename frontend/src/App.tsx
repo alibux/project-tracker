@@ -4,6 +4,7 @@ import { ToastContainer } from './components/UI/Toast'
 import { ProjectSwitcher } from './components/Projects/ProjectSwitcher'
 import { KanbanBoard } from './components/Board/KanbanBoard'
 import { TaskModal } from './components/Tasks/TaskModal'
+import { SprintPanel } from './components/Sprints/SprintPanel'
 import { useBoardStore } from './store/boardStore'
 import { useSprints } from './hooks/useSprints'
 import { TASK_KEYS } from './hooks/useTasks'
@@ -52,6 +53,7 @@ function SprintFilter({ projectId }: { projectId: string }) {
 function BoardArea({ projectId }: { projectId: string }) {
   const currentSprintId = useBoardStore((s) => s.currentSprintId)
   const qc = useQueryClient()
+  const [sprintPanelOpen, setSprintPanelOpen] = React.useState(false)
 
   type ModalState =
     | { open: false }
@@ -81,16 +83,25 @@ function BoardArea({ projectId }: { projectId: string }) {
       {/* Board toolbar */}
       <div className="flex items-center gap-4 px-6 py-3 border-b border-slate-200 bg-white shrink-0">
         <SprintFilter projectId={projectId} />
+        <button
+          onClick={() => setSprintPanelOpen((o) => !o)}
+          className="ml-2 rounded-md border border-slate-200 bg-white px-3 py-1 text-sm text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400 transition-colors"
+        >
+          {sprintPanelOpen ? 'Hide Sprints' : 'Sprints'}
+        </button>
       </div>
 
-      {/* Board */}
-      <div className="flex-1 overflow-hidden">
-        <KanbanBoard
-          projectId={projectId}
-          sprintId={currentSprintId}
-          onAddTask={handleAddTask}
-          onTaskClick={handleTaskClick}
-        />
+      {/* Board + optional sprint panel */}
+      <div className="flex flex-1 overflow-hidden">
+        {sprintPanelOpen && <SprintPanel projectId={projectId} />}
+        <div className="flex-1 overflow-hidden">
+          <KanbanBoard
+            projectId={projectId}
+            sprintId={currentSprintId}
+            onAddTask={handleAddTask}
+            onTaskClick={handleTaskClick}
+          />
+        </div>
       </div>
 
       {modal.open && modal.mode === 'create' && (
