@@ -5,6 +5,7 @@ import { ProjectSwitcher } from './components/Projects/ProjectSwitcher'
 import { KanbanBoard } from './components/Board/KanbanBoard'
 import { TaskModal } from './components/Tasks/TaskModal'
 import { SprintPanel } from './components/Sprints/SprintPanel'
+import { SettingsPage } from './components/Settings/SettingsPage'
 import { useBoardStore } from './store/boardStore'
 import { useSprints } from './hooks/useSprints'
 import { TASK_KEYS } from './hooks/useTasks'
@@ -129,27 +130,42 @@ function BoardArea({ projectId }: { projectId: string }) {
 
 function AppShell() {
   const currentProjectId = useBoardStore((s) => s.currentProjectId)
+  const [settingsOpen, setSettingsOpen] = React.useState(false)
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-slate-50">
       {/* Top bar */}
-      <header className="flex items-center border-b border-slate-200 bg-white px-6 py-3 shrink-0">
+      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 shrink-0">
         <h1 className="text-lg font-semibold text-slate-900">Project Tracker</h1>
+        <button
+          aria-label="Open settings"
+          onClick={() => setSettingsOpen(true)}
+          className="rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 transition-colors"
+        >
+          ⚙️
+        </button>
       </header>
 
       {/* Body */}
       <div className="flex flex-1 overflow-hidden">
-        <ProjectSwitcher />
-
-        <main className="flex-1 overflow-hidden">
-          {currentProjectId ? (
-            <BoardArea projectId={currentProjectId} />
-          ) : (
-            <div className="flex h-full items-center justify-center">
-              <p className="text-sm text-slate-400">Select or create a project to get started.</p>
-            </div>
-          )}
-        </main>
+        {settingsOpen ? (
+          <div className="flex-1 overflow-hidden">
+            <SettingsPage onClose={() => setSettingsOpen(false)} />
+          </div>
+        ) : (
+          <>
+            <ProjectSwitcher />
+            <main className="flex-1 overflow-hidden">
+              {currentProjectId ? (
+                <BoardArea projectId={currentProjectId} />
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <p className="text-sm text-slate-400">Select or create a project to get started.</p>
+                </div>
+              )}
+            </main>
+          </>
+        )}
       </div>
     </div>
   )
