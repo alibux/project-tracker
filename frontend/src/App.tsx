@@ -1,9 +1,14 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import * as React from 'react'
+import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query'
 import { ToastContainer } from './components/UI/Toast'
 import { ProjectSwitcher } from './components/Projects/ProjectSwitcher'
 import { KanbanBoard } from './components/Board/KanbanBoard'
+import { TaskModal } from './components/Tasks/TaskModal'
 import { useBoardStore } from './store/boardStore'
 import { useSprints } from './hooks/useSprints'
+import { TASK_KEYS } from './hooks/useTasks'
+import type { Task } from './api/types'
+import type { Column } from './data/constants'
 import './index.css'
 
 const queryClient = new QueryClient({
@@ -46,13 +51,29 @@ function SprintFilter({ projectId }: { projectId: string }) {
 
 function BoardArea({ projectId }: { projectId: string }) {
   const currentSprintId = useBoardStore((s) => s.currentSprintId)
+  const qc = useQueryClient()
 
-  // Placeholder handlers — will be replaced by TaskModal in Task 10
+  type ModalState =
+    | { open: false }
+    | { open: true; mode: 'create'; defaultColumn: Column }
+    | { open: true; mode: 'edit'; task: Task }
+
+  const [modal, setModal] = React.useState<ModalState>({ open: false })
+
   function handleAddTask(column: string) {
-    console.log('Add task to column:', column)
+    setModal({ open: true, mode: 'create', defaultColumn: column as Column })
   }
-  function handleTaskClick(task: { id: string; title: string }) {
-    console.log('Task clicked:', task.id, task.title)
+
+  function handleTaskClick(task: Task) {
+    setModal({ open: true, mode: 'edit', task })
+  }
+
+  function handleClose() {
+    setModal({ open: false })
+  }
+
+  function handleSaved() {
+    qc.invalidateQueries({ queryKey: TASK_KEYS.all(projectId) })
   }
 
   return (
@@ -71,6 +92,26 @@ function BoardArea({ projectId }: { projectId: string }) {
           onTaskClick={handleTaskClick}
         />
       </div>
+
+      {modal.open && modal.mode === 'create' && (
+        <TaskModal
+          open
+          mode="create"
+          projectId={projectId}
+          defaultColumn={modal.defaultColumn}
+          onClose={handleClose}
+          onSaved={handleSaved}
+        />
+      )}
+      {modal.open && modal.mode === 'edit' && (
+        <TaskModal
+          open
+          mode="edit"
+          task={modal.task}
+          onClose={handleClose}
+          onSaved={handleSaved}
+        />
+      )}
     </div>
   )
 }
