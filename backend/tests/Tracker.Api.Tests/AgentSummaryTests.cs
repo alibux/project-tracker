@@ -99,4 +99,31 @@ public class AgentSummaryTests : IDisposable
         var agents = Assert.IsType<List<AgentSummaryDto>>(ok.Value);
         Assert.Equal("Current focus", agents.First(a => a.AgentKey == "ux").CurrentFocus);
     }
+
+    [Fact]
+    public async Task LegacyAssignee_CountsTowardActiveTaskCount()
+    {
+        var pid = await SeedProject();
+        _db.Tasks.Add(new TaskItem { Id = Guid.NewGuid(), ProjectId = pid, Title = "Legacy", Column = "InProgress", AssigneeAgentKey = null, Assignee = "Pixel", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
+        await _db.SaveChangesAsync();
+
+        var result = await _controller.GetSummary();
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var agents = Assert.IsType<List<AgentSummaryDto>>(ok.Value);
+        var pixel = agents.First(a => a.AgentKey == "frontend");
+        Assert.Equal(1, pixel.ActiveTaskCount);
+    }
+
+    [Fact]
+    public async Task LegacyAssignee_AgentStatusIsActive_NotIdle()
+    {
+        var pid = await SeedProject();
+        _db.Tasks.Add(new TaskItem { Id = Guid.NewGuid(), ProjectId = pid, Title = "Legacy2", Column = "InProgress", AssigneeAgentKey = null, Assignee = "pixel", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
+        await _db.SaveChangesAsync();
+
+        var result = await _controller.GetSummary();
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var agents = Assert.IsType<List<AgentSummaryDto>>(ok.Value);
+        Assert.Equal("active", agents.First(a => a.AgentKey == "frontend").Status);
+    }
 }

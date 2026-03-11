@@ -130,14 +130,15 @@ export function KanbanBoard({ projectId, sprintId, onAddTask, onTaskClick, agent
     >
       <div className="flex gap-4 p-6 overflow-x-auto h-full">
         {COLUMNS.map((col) => (
+          <div key={col} className="max-h-[calc(100vh-200px)] flex flex-col">
           <BoardColumn
-            key={col}
             column={col}
             tasks={tasksByColumn[col] ?? []}
             onAddTask={() => onAddTask(col)}
             onTaskClick={onTaskClick}
             onTaskDelete={handleDelete}
           />
+          </div>
         ))}
       </div>
 
