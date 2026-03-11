@@ -137,4 +137,18 @@ describe('TaskModal', () => {
     await userEvent.click(screen.getByRole('button', { name: /cancel/i }))
     expect(onClose).toHaveBeenCalled()
   })
+
+  it('7. edit mode with legacy assignee text and null assigneeAgentKey shows correct agent selected', () => {
+    const legacyTask: Task = {
+      ...sampleTask,
+      assignee: 'Pixel',
+      assigneeAgentKey: null,
+    }
+    render(
+      <TaskModal open={true} mode="edit" task={legacyTask} onClose={vi.fn()} />,
+    )
+    const assigneeSelect = screen.getByRole('combobox', { name: /assignee/i }) as HTMLSelectElement
+    // Should resolve to 'frontend' key (Pixel), not empty string (Unassigned)
+    expect(assigneeSelect.value).toBe('frontend')
+  })
 })

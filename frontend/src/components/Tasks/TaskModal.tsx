@@ -56,12 +56,20 @@ export function TaskModal(props: TaskModalProps) {
   // Derive initial form state
   const initial = React.useMemo(() => {
     if (props.mode === 'edit') {
+      // Fallback: if assigneeAgentKey is missing but assignee text exists, look up by name
+      let assigneeAgentKey = props.task.assigneeAgentKey ?? ''
+      if (!assigneeAgentKey && props.task.assignee) {
+        const matched = AGENT_OPTIONS.find(
+          (a) => a.name.toLowerCase() === props.task.assignee!.toLowerCase()
+        )
+        if (matched) assigneeAgentKey = matched.key
+      }
       return {
         title: props.task.title,
         priority: props.task.priority as Priority,
         type: props.task.type as TaskType,
         assignee: props.task.assignee ?? '',
-        assigneeAgentKey: props.task.assigneeAgentKey ?? '',
+        assigneeAgentKey,
         column: props.task.column as Column,
         sprintId: props.task.sprintId ?? '',
       }
