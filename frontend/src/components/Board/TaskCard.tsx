@@ -4,18 +4,17 @@ import { GithubIcon, MoreVertical, Trash2 } from 'lucide-react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { Badge } from '../UI/Badge'
 import { cn } from '../../lib/utils'
-import { PRIORITY_COLORS, TYPE_COLORS, COLUMN_STYLES } from '../../data/constants'
-import type { Task, Column } from '../../api/types'
+import { PRIORITY_COLORS, TYPE_COLORS } from '../../data/constants'
+import type { Task } from '../../api/types'
 
 interface TaskCardProps {
   task: Task
-  column?: Column
   onClick: () => void
   onDelete: () => void
   isDragging?: boolean
 }
 
-export function TaskCard({ task, column, onClick, onDelete, isDragging = false }: TaskCardProps) {
+export function TaskCard({ task, onClick, onDelete, isDragging = false }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging: sortableDragging } =
     useSortable({ id: task.id })
 
@@ -25,16 +24,14 @@ export function TaskCard({ task, column, onClick, onDelete, isDragging = false }
   }
 
   const dragging = isDragging || sortableDragging
-  const cardBorder = column ? COLUMN_STYLES[column].cardBorder : 'border-l-slate-300'
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group relative rounded-2xl border border-slate-200 border-l-4 bg-white p-4 shadow-sm cursor-pointer select-none',
-        'hover:shadow-md hover:-translate-y-0.5 transition duration-150',
-        cardBorder,
+        'group relative rounded-lg border border-slate-200 bg-white p-3 shadow-sm cursor-pointer select-none',
+        'hover:border-slate-300 hover:shadow-md transition-all',
         dragging && 'opacity-50 shadow-lg ring-2 ring-blue-400',
       )}
       onClick={onClick}
@@ -42,17 +39,17 @@ export function TaskCard({ task, column, onClick, onDelete, isDragging = false }
       {...listeners}
     >
       {/* Title */}
-      <p className="text-sm font-semibold text-slate-800 leading-snug mb-2 pr-6">{task.title}</p>
+      <p className="text-sm font-medium text-slate-800 leading-snug mb-2 pr-6">{task.title}</p>
 
       {/* Badges row */}
       <div className="flex flex-wrap items-center gap-1">
         <Badge
           label={task.priority}
-          className={cn(PRIORITY_COLORS[task.priority] ?? 'bg-slate-100 text-slate-600')}
+          className={cn('text-xs', PRIORITY_COLORS[task.priority] ?? 'bg-slate-100 text-slate-600')}
         />
         <Badge
           label={task.type}
-          className={cn(TYPE_COLORS[task.type] ?? 'bg-slate-100 text-slate-600')}
+          className={cn('text-xs', TYPE_COLORS[task.type] ?? 'bg-slate-100 text-slate-600')}
         />
         {task.assignee && (
           <span className="ml-auto text-xs text-slate-400">{task.assignee}</span>
