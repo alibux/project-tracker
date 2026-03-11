@@ -108,7 +108,7 @@ function BoardArea({ projectId }: { projectId: string }) {
         <SprintFilter projectId={projectId} />
         <button
           onClick={() => setSprintPanelOpen((o) => !o)}
-          className="rounded-md border border-slate-200 bg-white px-3 py-1 text-sm text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400 transition-colors"
+          className="rounded-md border border-slate-200 bg-white px-3 py-1 text-sm text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1 transition-colors duration-150 min-h-[44px] md:min-h-0"
         >
           {sprintPanelOpen ? 'Hide Sprints' : 'Sprints'}
         </button>
@@ -119,7 +119,8 @@ function BoardArea({ projectId }: { projectId: string }) {
             <button
               onClick={() => setSelectedAgentKey(null)}
               className={cn(
-                'rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                'rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-150 min-h-[44px] md:min-h-0',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1',
                 selectedAgentKey === null
                   ? 'bg-slate-900 text-white border-slate-900'
                   : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
@@ -136,13 +137,14 @@ function BoardArea({ projectId }: { projectId: string }) {
                   key={key}
                   onClick={() => setSelectedAgentKey(key)}
                   className={cn(
-                    'rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                    'rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-150 min-h-[44px] md:min-h-0',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1',
                     selected
                       ? 'bg-slate-900 text-white border-slate-900'
                       : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
                   )}
                 >
-                  {agent.emoji} {agent.name}
+                  <span role="img" aria-label={`${agent.name} agent`}>{agent.emoji}</span> {agent.name}
                 </button>
               )
             })}
@@ -205,9 +207,9 @@ function AppShell() {
         <button
           aria-label="Open settings"
           onClick={() => setSettingsOpen(true)}
-          className="rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 transition-colors"
+          className="rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1 transition-colors duration-150 min-h-[44px] min-w-[44px] flex items-center justify-center"
         >
-          ⚙️
+          <span role="img" aria-label="Settings">⚙️</span>
         </button>
       </header>
 

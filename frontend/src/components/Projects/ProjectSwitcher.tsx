@@ -54,14 +54,15 @@ export function ProjectSwitcher() {
 
   return (
     <>
-      <aside className="flex h-full w-56 flex-col border-r border-slate-200 bg-white">
+      {/* TODO: Add mobile sidebar toggle for full responsive sidebar support */}
+      <aside className="hidden md:flex h-full w-56 flex-col border-r border-slate-200 bg-white">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
           <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">Projects</span>
           <button
             onClick={openCreate}
             title="New project"
-            className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+            className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1"
           >
             <Plus className="h-4 w-4" />
           </button>
@@ -82,8 +83,12 @@ export function ProjectSwitcher() {
             <div
               key={project.id}
               onClick={() => setCurrentProjectId(project.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && setCurrentProjectId(project.id)}
               className={cn(
-                'group flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors',
+                'group flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors duration-150',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-slate-400',
                 currentProjectId === project.id
                   ? 'bg-slate-100 text-slate-900 font-medium'
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',

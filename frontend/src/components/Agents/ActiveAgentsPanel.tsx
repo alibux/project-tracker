@@ -59,7 +59,7 @@ export function ActiveAgentsPanel() {
         <button
           onClick={toggle}
           aria-label={expanded ? 'Collapse agents panel' : 'Expand agents panel'}
-          className="rounded p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+          className="rounded p-1 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1"
         >
           {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
@@ -67,7 +67,7 @@ export function ActiveAgentsPanel() {
 
       {/* Body */}
       {expanded && (
-        <div className="mt-3">
+        <div className="mt-3 transition-all duration-200 animate-in fade-in slide-in-from-top-1">
           {visibleAgents.length === 0 ? (
             <div className="flex items-center justify-center py-4 text-sm text-slate-400">
               No active agents right now
@@ -83,6 +83,8 @@ export function ActiveAgentsPanel() {
                   >
                     {/* Emoji */}
                     <span
+                      role="img"
+                      aria-label={`${agent.name} agent`}
                       className={cn(
                         'text-base leading-none w-5 text-center flex-shrink-0',
                         isIdle && '[filter:grayscale(1)]'
@@ -102,12 +104,16 @@ export function ActiveAgentsPanel() {
                     </span>
 
                     {/* Status dot + label */}
-                    <span className={cn('h-2 w-2 rounded-full flex-shrink-0', STATUS_DOT[agent.status])} />
+                    <span
+                      className={cn('h-2 w-2 rounded-full flex-shrink-0', STATUS_DOT[agent.status])}
+                      aria-hidden="true"
+                    />
                     <span
                       className={cn(
                         'text-xs font-medium w-16 flex-shrink-0 capitalize',
                         STATUS_LABEL_COLOR[agent.status]
                       )}
+                      aria-live="polite"
                     >
                       {agent.status}
                     </span>
