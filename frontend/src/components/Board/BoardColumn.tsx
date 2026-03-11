@@ -21,7 +21,7 @@ export function BoardColumn({ column, tasks, onAddTask, onTaskClick, onTaskDelet
   const styles = COLUMN_STYLES[column]
 
   return (
-    <div className="flex flex-col w-72 shrink-0 rounded-3xl border border-slate-200 bg-white/70 shadow-sm overflow-hidden">
+    <div className="flex flex-col w-72 shrink-0 rounded-3xl border border-slate-200 bg-white/70 shadow-sm overflow-hidden h-full">
       {/* Column header */}
       <div className={cn('flex items-center justify-between px-4 py-3', styles.headerBg)}>
         <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export function BoardColumn({ column, tasks, onAddTask, onTaskClick, onTaskDelet
       <div
         ref={setNodeRef}
         className={cn(
-          'flex flex-col p-3 flex-1 transition-colors',
+          'flex flex-col gap-2 p-3 flex-1 min-h-0 overflow-y-auto transition-colors',
           isOver ? styles.dropOver : 'bg-transparent',
         )}
       >
