@@ -53,6 +53,30 @@ public class TaskItem
     /// <summary>Gets or sets the last update timestamp (UTC).</summary>
     public DateTime UpdatedAt { get; set; }
 
+    // Agent metadata
+    /// <summary>Agent key: frontend | backend | ux | qa | main</summary>
+    [MaxLength(50)]
+    public string? AssigneeAgentKey { get; set; }
+
+    /// <summary>Agent display name, e.g. "Pixel", "Bastion"</summary>
+    [MaxLength(100)]
+    public string? AssigneeAgentName { get; set; }
+
+    /// <summary>Agent emoji, e.g. "🎨", "🏰"</summary>
+    [MaxLength(10)]
+    public string? AssigneeAgentEmoji { get; set; }
+
+    /// <summary>Activity status: active | waiting | blocked | reviewing | idle</summary>
+    [MaxLength(20)]
+    public string? ActivityStatus { get; set; }
+
+    /// <summary>When the agent last updated this task.</summary>
+    public DateTime? LastAgentUpdateAt { get; set; }
+
+    /// <summary>Short summary of last agent activity.</summary>
+    [MaxLength(500)]
+    public string? LastAgentUpdateText { get; set; }
+
     // Navigation
     public Project Project { get; set; } = null!;
     public Sprint? Sprint { get; set; }
