@@ -31,6 +31,9 @@ export interface Task {
   priority: Priority
   type: TaskType
   assignee: string | null
+  assigneeAgentKey?: string | null
+  assigneeAgentName?: string | null
+  assigneeAgentEmoji?: string | null
   column: Column
   position: number
   githubPrUrl: string | null
@@ -105,3 +108,19 @@ export interface UpdateSettingsRequest {
   digestTime: string
   githubWebhookSecret?: string | null
 }
+
+// ── Agent types ────────────────────────────────────────────────────────────────
+
+export type AgentStatus = 'active' | 'waiting' | 'blocked' | 'reviewing' | 'idle'
+
+export interface AgentSummary {
+  agentKey: string
+  name: string
+  emoji: string
+  status: AgentStatus
+  activeTaskCount: number
+  currentFocus: string | null
+}
+
+// ── Task agent fields ──────────────────────────────────────────────────────────
+// These are optional additions; the backend may not yet return them on all tasks.

@@ -13,6 +13,19 @@ import { COLUMNS, COLUMN_LABELS, PRIORITIES, TASK_TYPES } from '../../data/const
 import type { Column, Priority, TaskType } from '../../data/constants'
 import type { Task } from '../../api/types'
 
+const AGENT_OPTIONS = [
+  { key: 'main', emoji: '🦞', name: 'Alfred', role: 'Orchestrator' },
+  { key: 'backend', emoji: '🏰', name: 'Bastion', role: 'Backend engineer' },
+  { key: 'frontend', emoji: '🎨', name: 'Pixel', role: 'Frontend engineer' },
+  { key: 'ux', emoji: '🌿', name: 'Sage', role: 'UX designer' },
+  { key: 'qa', emoji: '👁️', name: 'Wraith', role: 'QA engineer' },
+  { key: 'research-analytics', emoji: '🔮', name: 'Oracle', role: 'Research & analytics' },
+  { key: 'content-creator', emoji: '⚡', name: 'Spark', role: 'Content creator' },
+  { key: 'platform-optimizer', emoji: '🔁', name: 'Shift', role: 'Platform optimizer' },
+  { key: 'scheduler', emoji: '⏱️', name: 'Chrono', role: 'Scheduler' },
+  { key: 'asset-generator', emoji: '🖼️', name: 'Flux', role: 'Asset generator' },
+]
+
 interface CreateMode {
   mode: 'create'
   projectId: string
@@ -48,6 +61,7 @@ export function TaskModal(props: TaskModalProps) {
         priority: props.task.priority as Priority,
         type: props.task.type as TaskType,
         assignee: props.task.assignee ?? '',
+        assigneeAgentKey: props.task.assigneeAgentKey ?? '',
         column: props.task.column as Column,
         sprintId: props.task.sprintId ?? '',
       }
@@ -57,6 +71,7 @@ export function TaskModal(props: TaskModalProps) {
       priority: 'medium' as Priority,
       type: 'feature' as TaskType,
       assignee: '',
+      assigneeAgentKey: '',
       column: (props.defaultColumn ?? 'Backlog') as Column,
       sprintId: '',
     }
@@ -186,14 +201,38 @@ export function TaskModal(props: TaskModalProps) {
           {/* Assignee */}
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-slate-700" htmlFor="task-assignee">Assignee</label>
-            <input
+            <select
               id="task-assignee"
-              type="text"
-              value={form.assignee}
-              onChange={(e) => update('assignee', e.target.value)}
-              placeholder="Optional"
-              className="rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400"
-            />
+              value={form.assigneeAgentKey}
+              onChange={(e) => {
+                const agentKey = e.target.value
+                const agent = AGENT_OPTIONS.find((a) => a.key === agentKey)
+                if (agent) {
+                  setForm((prev) => ({
+                    ...prev,
+                    assigneeAgentKey: agentKey,
+                    assignee: agent.name,
+                  }))
+                } else {
+                  setForm((prev) => ({
+                    ...prev,
+                    assigneeAgentKey: '',
+                    assignee: '',
+                  }))
+                }
+              }}
+              className="rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400"
+            >
+              <option value="">— Unassigned</option>
+              {AGENT_OPTIONS.map((a) => (
+                <option key={a.key} value={a.key}>
+                  {a.emoji} {a.name} — {a.role}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-slate-400 mt-1">
+              If left blank, Alfred may assign the best agent automatically.
+            </p>
           </div>
 
           {/* Column + Sprint row */}

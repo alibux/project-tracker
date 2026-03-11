@@ -24,9 +24,10 @@ interface KanbanBoardProps {
   sprintId?: string | null
   onAddTask: (column: string) => void
   onTaskClick: (task: Task) => void
+  agentFilter?: string | null
 }
 
-export function KanbanBoard({ projectId, sprintId, onAddTask, onTaskClick }: KanbanBoardProps) {
+export function KanbanBoard({ projectId, sprintId, onAddTask, onTaskClick, agentFilter }: KanbanBoardProps) {
   const { data: tasks = [], isLoading, isError } = useTasks(projectId, sprintId)
   const moveTask = useMoveTask(projectId)
   const deleteTask = useDeleteTask(projectId)
@@ -44,16 +45,17 @@ export function KanbanBoard({ projectId, sprintId, onAddTask, onTaskClick }: Kan
     ...(optimisticTasks[t.id] ?? {}),
   }))
 
-  // Group tasks by column, sorted by position
+  // Group tasks by column, sorted by position (filtered by agent if selected)
   const tasksByColumn = React.useMemo(() => {
     const map: Record<string, Task[]> = {}
     for (const col of COLUMNS) map[col] = []
     for (const task of mergedTasks) {
+      if (agentFilter && task.assigneeAgentKey !== agentFilter) continue
       if (map[task.column]) map[task.column].push(task)
     }
     for (const col of COLUMNS) map[col].sort((a, b) => a.position - b.position)
     return map
-  }, [mergedTasks])
+  }, [mergedTasks, agentFilter])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
