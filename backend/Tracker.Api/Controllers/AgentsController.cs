@@ -30,12 +30,17 @@ public class AgentsController : ControllerBase
     [HttpGet("summary")]
     public async Task<ActionResult<List<AgentSummaryDto>>> GetSummary()
     {
-        // Load all tasks with agent keys in one query
+        // Load all tasks that are assigned via agent key OR legacy assignee text
+        var agentKeys = KnownAgents.Select(a => a.Key).ToList();
+        var agentNames = KnownAgents.Select(a => a.Name).ToList();
+
         var tasks = await _db.Tasks
-            .Where(t => t.AssigneeAgentKey != null)
+            .Where(t => t.AssigneeAgentKey != null ||
+                        (t.AssigneeAgentKey == null && t.Assignee != null))
             .Select(t => new
             {
                 t.AssigneeAgentKey,
+                t.Assignee,
                 t.Column,
                 t.ActivityStatus,
                 t.LastAgentUpdateAt,
@@ -43,25 +48,26 @@ public class AgentsController : ControllerBase
             })
             .ToListAsync();
 
-        var grouped = tasks.GroupBy(t => t.AssigneeAgentKey).ToDictionary(g => g.Key!);
-
         var result = KnownAgents.Select(agent =>
         {
-            var agentTasks = grouped.GetValueOrDefault(agent.Key);
+            var agentTasks = tasks.Where(t =>
+                t.AssigneeAgentKey == agent.Key ||
+                (t.AssigneeAgentKey == null &&
+                 string.Equals(t.Assignee, agent.Name, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
 
             int active = 0, inReview = 0, done = 0;
             string? currentFocus = null;
             bool isBlocked = false;
 
-            if (agentTasks != null)
+            if (agentTasks.Count > 0)
             {
-                var taskList = agentTasks.ToList();
-                active = taskList.Count(t => t.Column == "InProgress");
-                inReview = taskList.Count(t => t.Column == "InReview");
-                done = taskList.Count(t => t.Column == "Done");
-                isBlocked = taskList.Any(t => t.Column == "InProgress" && t.ActivityStatus == "blocked");
+                active = agentTasks.Count(t => t.Column == "InProgress");
+                inReview = agentTasks.Count(t => t.Column == "InReview");
+                done = agentTasks.Count(t => t.Column == "Done");
+                isBlocked = agentTasks.Any(t => t.Column == "InProgress" && t.ActivityStatus == "blocked");
 
-                currentFocus = taskList
+                currentFocus = agentTasks
                     .Where(t => t.Column == "InProgress" && t.LastAgentUpdateText != null)
                     .OrderByDescending(t => t.LastAgentUpdateAt)
                     .Select(t => t.LastAgentUpdateText)
