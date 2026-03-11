@@ -54,42 +54,42 @@ export function ProjectSwitcher() {
 
   return (
     <>
-      <aside className="flex h-full w-56 flex-col border-r border-slate-200 bg-white">
+      <aside className="flex h-full w-60 flex-col border-r border-slate-200 bg-white">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-          <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">Projects</span>
+        <div className="flex items-center justify-between px-4 py-4 border-b border-slate-100">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Projects</span>
           <button
             onClick={openCreate}
             title="New project"
-            className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+            className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
           >
             <Plus className="h-4 w-4" />
           </button>
         </div>
 
         {/* Project list */}
-        <nav className="flex-1 overflow-y-auto py-2">
+        <nav className="flex-1 overflow-y-auto py-2 px-2">
           {isLoading && (
-            <p className="px-4 py-2 text-sm text-slate-400">Loading…</p>
+            <p className="px-2 py-2 text-sm text-slate-400">Loading…</p>
           )}
           {isError && (
-            <p className="px-4 py-2 text-sm text-red-500">Failed to load projects</p>
+            <p className="px-2 py-2 text-sm text-red-500">Failed to load projects</p>
           )}
           {!isLoading && !isError && projects.length === 0 && (
-            <p className="px-4 py-2 text-sm text-slate-400">No projects yet</p>
+            <p className="px-2 py-2 text-sm text-slate-400">No projects yet</p>
           )}
           {projects.map((project) => (
             <div
               key={project.id}
               onClick={() => setCurrentProjectId(project.id)}
               className={cn(
-                'group flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors',
+                'group flex cursor-pointer items-center gap-2 px-3 py-2 rounded-xl text-sm transition-colors',
                 currentProjectId === project.id
-                  ? 'bg-slate-100 text-slate-900 font-medium'
+                  ? 'bg-slate-100 text-slate-900 font-semibold shadow-sm'
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
               )}
             >
-              <FolderKanban className="h-4 w-4 shrink-0 text-slate-400" />
+              <FolderKanban className={cn('h-4 w-4 shrink-0', currentProjectId === project.id ? 'text-slate-700' : 'text-slate-400')} />
               <span className="flex-1 truncate">{project.name}</span>
 
               {/* Actions — visible on hover */}
@@ -97,14 +97,14 @@ export function ProjectSwitcher() {
                 <button
                   onClick={(e) => openEdit(e, project)}
                   title="Rename"
-                  className="rounded p-0.5 hover:bg-slate-200 text-slate-400 hover:text-slate-700"
+                  className="rounded-lg p-0.5 hover:bg-slate-200 text-slate-400 hover:text-slate-700"
                 >
                   <Pencil className="h-3 w-3" />
                 </button>
                 <button
                   onClick={(e) => handleDelete(e, project)}
                   title="Delete"
-                  className="rounded p-0.5 hover:bg-red-100 text-slate-400 hover:text-red-600"
+                  className="rounded-lg p-0.5 hover:bg-red-100 text-slate-400 hover:text-red-600"
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
