@@ -44,31 +44,34 @@ export function BoardColumn({ column, tasks, onAddTask, onTaskClick, onTaskDelet
       <div
         ref={setNodeRef}
         className={cn(
-          'flex flex-col gap-2 p-3 flex-1 min-h-[200px] transition-colors',
+          'flex flex-col p-3 flex-1 transition-colors',
           isOver ? styles.dropOver : 'bg-transparent',
         )}
       >
-        <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
-          {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onClick={() => onTaskClick(task)}
-              onDelete={() => onTaskDelete(task)}
-            />
-          ))}
-        </SortableContext>
+        {/* Scrollable card list */}
+        <div className="overflow-y-auto max-h-[calc(100vh-280px)] flex flex-col gap-2 min-h-[200px]">
+          <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+            {tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onClick={() => onTaskClick(task)}
+                onDelete={() => onTaskDelete(task)}
+              />
+            ))}
+          </SortableContext>
 
-        {tasks.length === 0 && (
-          <p className="flex-1 flex items-center justify-center text-xs text-slate-400 py-8">
-            No tasks
-          </p>
-        )}
+          {tasks.length === 0 && (
+            <p className="flex-1 flex items-center justify-center text-xs text-slate-400 py-8">
+              No tasks
+            </p>
+          )}
+        </div>
 
-        {/* Add task affordance */}
+        {/* Add task affordance — always visible */}
         <button
           onClick={onAddTask}
-          className="mt-1 w-full rounded-2xl border border-dashed border-slate-300 py-2 text-xs text-slate-400 hover:text-slate-600 hover:border-slate-400 transition-colors"
+          className="mt-2 w-full rounded-2xl border border-dashed border-slate-300 py-2 text-xs text-slate-400 hover:text-slate-600 hover:border-slate-400 transition-colors"
         >
           <Plus className="h-3 w-3 inline mr-1" />
           Add task
