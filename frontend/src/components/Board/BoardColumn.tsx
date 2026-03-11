@@ -3,7 +3,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
 import { TaskCard } from './TaskCard'
 import { cn } from '../../lib/utils'
-import { COLUMN_LABELS } from '../../data/constants'
+import { COLUMN_LABELS, COLUMN_STYLES } from '../../data/constants'
 import type { Task, Column } from '../../api/types'
 
 interface BoardColumnProps {
@@ -18,21 +18,23 @@ export function BoardColumn({ column, tasks, onAddTask, onTaskClick, onTaskDelet
   const { setNodeRef, isOver } = useDroppable({ id: column })
 
   const label = COLUMN_LABELS[column]
+  const styles = COLUMN_STYLES[column]
 
   return (
-    <div className="flex flex-col w-72 shrink-0">
+    <div className="flex flex-col w-72 shrink-0 rounded-3xl border border-slate-200 bg-white/70 shadow-sm overflow-hidden">
       {/* Column header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className={cn('flex items-center justify-between px-4 py-3', styles.headerBg)}>
         <div className="flex items-center gap-2">
-          <h3 className="text-sm font-semibold text-slate-700">{label}</h3>
-          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
+          <span className={cn('h-2 w-2 rounded-full shrink-0', styles.dot)} />
+          <h3 className={cn('text-sm font-bold', styles.headerText)}>{label}</h3>
+          <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium', styles.badgeBg, styles.badgeText)}>
             {tasks.length}
           </span>
         </div>
         <button
           onClick={onAddTask}
           title={`Add task to ${label}`}
-          className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+          className={cn('rounded-lg p-1 transition-colors', styles.headerText, 'hover:bg-white/50')}
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -42,8 +44,8 @@ export function BoardColumn({ column, tasks, onAddTask, onTaskClick, onTaskDelet
       <div
         ref={setNodeRef}
         className={cn(
-          'flex flex-col gap-2 rounded-xl p-2 min-h-[200px] transition-colors',
-          isOver ? 'bg-blue-50 ring-2 ring-blue-200' : 'bg-slate-100/60',
+          'flex flex-col gap-2 p-3 flex-1 min-h-[200px] transition-colors',
+          isOver ? styles.dropOver : 'bg-transparent',
         )}
       >
         <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
@@ -51,6 +53,7 @@ export function BoardColumn({ column, tasks, onAddTask, onTaskClick, onTaskDelet
             <TaskCard
               key={task.id}
               task={task}
+              column={column}
               onClick={() => onTaskClick(task)}
               onDelete={() => onTaskDelete(task)}
             />
@@ -62,6 +65,15 @@ export function BoardColumn({ column, tasks, onAddTask, onTaskClick, onTaskDelet
             No tasks
           </p>
         )}
+
+        {/* Add task affordance */}
+        <button
+          onClick={onAddTask}
+          className="mt-1 w-full rounded-2xl border border-dashed border-slate-300 py-2 text-xs text-slate-400 hover:text-slate-600 hover:border-slate-400 transition-colors"
+        >
+          <Plus className="h-3 w-3 inline mr-1" />
+          Add task
+        </button>
       </div>
     </div>
   )

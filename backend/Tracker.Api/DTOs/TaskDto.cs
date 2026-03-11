@@ -18,6 +18,12 @@ public class TaskDto
     public string? GithubIssueUrl { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public string? AssigneeAgentKey { get; set; }
+    public string? AssigneeAgentName { get; set; }
+    public string? AssigneeAgentEmoji { get; set; }
+    public string? ActivityStatus { get; set; }
+    public DateTime? LastAgentUpdateAt { get; set; }
+    public string? LastAgentUpdateText { get; set; }
 }
 
 /// <summary>
@@ -51,6 +57,14 @@ public class CreateTaskDto
 
     /// <summary>Optional GitHub Issue URL.</summary>
     public string? GithubIssueUrl { get; set; }
+
+    /// <summary>Agent key.</summary>
+    public string? AssigneeAgentKey { get; set; }
+    public string? AssigneeAgentName { get; set; }
+    public string? AssigneeAgentEmoji { get; set; }
+    public string? ActivityStatus { get; set; }
+    public DateTime? LastAgentUpdateAt { get; set; }
+    public string? LastAgentUpdateText { get; set; }
 }
 
 /// <summary>
@@ -66,6 +80,12 @@ public class UpdateTaskDto
     public string Column { get; set; } = "Backlog";
     public string? GithubPrUrl { get; set; }
     public string? GithubIssueUrl { get; set; }
+    public string? AssigneeAgentKey { get; set; }
+    public string? AssigneeAgentName { get; set; }
+    public string? AssigneeAgentEmoji { get; set; }
+    public string? ActivityStatus { get; set; }
+    public DateTime? LastAgentUpdateAt { get; set; }
+    public string? LastAgentUpdateText { get; set; }
 }
 
 /// <summary>

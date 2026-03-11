@@ -115,7 +115,13 @@ public class TasksController : ControllerBase
             Column = dto.Column,
             Position = maxPosition + 1000,
             GithubPrUrl = dto.GithubPrUrl?.Trim(),
-            GithubIssueUrl = dto.GithubIssueUrl?.Trim()
+            GithubIssueUrl = dto.GithubIssueUrl?.Trim(),
+            AssigneeAgentKey = dto.AssigneeAgentKey?.Trim(),
+            AssigneeAgentName = dto.AssigneeAgentName?.Trim(),
+            AssigneeAgentEmoji = dto.AssigneeAgentEmoji?.Trim(),
+            ActivityStatus = dto.ActivityStatus?.Trim(),
+            LastAgentUpdateAt = dto.LastAgentUpdateAt,
+            LastAgentUpdateText = dto.LastAgentUpdateText?.Trim()
         };
 
         _db.Tasks.Add(task);
@@ -158,6 +164,12 @@ public class TasksController : ControllerBase
         task.Column = dto.Column;
         task.GithubPrUrl = dto.GithubPrUrl?.Trim();
         task.GithubIssueUrl = dto.GithubIssueUrl?.Trim();
+        task.AssigneeAgentKey = dto.AssigneeAgentKey?.Trim();
+        task.AssigneeAgentName = dto.AssigneeAgentName?.Trim();
+        task.AssigneeAgentEmoji = dto.AssigneeAgentEmoji?.Trim();
+        task.ActivityStatus = dto.ActivityStatus?.Trim();
+        task.LastAgentUpdateAt = dto.LastAgentUpdateAt;
+        task.LastAgentUpdateText = dto.LastAgentUpdateText?.Trim();
 
         await _db.SaveChangesAsync();
 
@@ -288,7 +300,13 @@ public class TasksController : ControllerBase
         GithubPrUrl = t.GithubPrUrl,
         GithubIssueUrl = t.GithubIssueUrl,
         CreatedAt = t.CreatedAt,
-        UpdatedAt = t.UpdatedAt
+        UpdatedAt = t.UpdatedAt,
+        AssigneeAgentKey = t.AssigneeAgentKey,
+        AssigneeAgentName = t.AssigneeAgentName,
+        AssigneeAgentEmoji = t.AssigneeAgentEmoji,
+        ActivityStatus = t.ActivityStatus,
+        LastAgentUpdateAt = t.LastAgentUpdateAt,
+        LastAgentUpdateText = t.LastAgentUpdateText
     };
 
     private static ProblemDetails BuildProblem(int status, string title, string detail) => new()
