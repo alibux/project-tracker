@@ -94,7 +94,8 @@ describe('TaskModal', () => {
     renderEdit()
     expect(screen.getByText('Edit Task')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Existing Task')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('alice')).toBeInTheDocument()
+    // Assignee is now a select; 'alice' is a legacy string with no agentKey, so select shows blank/unassigned
+    expect(screen.getByRole('combobox', { name: /assignee/i })).toBeInTheDocument()
     // priority and type selects
     expect(screen.getByDisplayValue('High')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Bug')).toBeInTheDocument()

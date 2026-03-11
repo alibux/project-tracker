@@ -53,7 +53,6 @@ export function BoardColumn({ column, tasks, onAddTask, onTaskClick, onTaskDelet
             <TaskCard
               key={task.id}
               task={task}
-              column={column}
               onClick={() => onTaskClick(task)}
               onDelete={() => onTaskDelete(task)}
             />

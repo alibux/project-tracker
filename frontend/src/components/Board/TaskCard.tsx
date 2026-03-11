@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { GithubIcon, MoreVertical, Trash2 } from 'lucide-react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { Badge } from '../UI/Badge'
+import { AgentChip } from '../Agents/AgentChip'
 import { cn } from '../../lib/utils'
 import { PRIORITY_COLORS, TYPE_COLORS } from '../../data/constants'
 import type { Task } from '../../api/types'
@@ -43,6 +44,9 @@ export function TaskCard({ task, onClick, onDelete, isDragging = false }: TaskCa
 
       {/* Badges row */}
       <div className="flex flex-wrap items-center gap-1">
+        {task.assigneeAgentKey && (
+          <AgentChip agentKey={task.assigneeAgentKey} size="sm" />
+        )}
         <Badge
           label={task.priority}
           className={cn('text-xs', PRIORITY_COLORS[task.priority] ?? 'bg-slate-100 text-slate-600')}
@@ -51,7 +55,7 @@ export function TaskCard({ task, onClick, onDelete, isDragging = false }: TaskCa
           label={task.type}
           className={cn('text-xs', TYPE_COLORS[task.type] ?? 'bg-slate-100 text-slate-600')}
         />
-        {task.assignee && (
+        {task.assignee && !task.assigneeAgentKey && (
           <span className="ml-auto text-xs text-slate-400">{task.assignee}</span>
         )}
       </div>
