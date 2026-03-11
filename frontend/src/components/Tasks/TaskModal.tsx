@@ -14,6 +14,7 @@ import type { Column, Priority, TaskType } from '../../data/constants'
 import type { Task } from '../../api/types'
 
 const AGENT_OPTIONS = [
+  { key: 'owner', emoji: '🦸', name: 'Rehan', role: 'Owner' },
   { key: 'main', emoji: '🦞', name: 'Alfred', role: 'Orchestrator' },
   { key: 'backend', emoji: '🏰', name: 'Bastion', role: 'Backend engineer' },
   { key: 'frontend', emoji: '🎨', name: 'Pixel', role: 'Frontend engineer' },

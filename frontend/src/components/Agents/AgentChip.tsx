@@ -11,6 +11,7 @@ interface AgentInfo {
 }
 
 const AGENTS: Record<string, AgentInfo> = {
+  owner: { emoji: '🦸', name: 'Rehan', bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-300' },
   main: { emoji: '🦞', name: 'Alfred', bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200' },
   backend: { emoji: '🏰', name: 'Bastion', bg: 'bg-zinc-100', text: 'text-zinc-700', border: 'border-zinc-300' },
   frontend: { emoji: '🎨', name: 'Pixel', bg: 'bg-violet-50', text: 'text-violet-700', border: 'border-violet-200' },
