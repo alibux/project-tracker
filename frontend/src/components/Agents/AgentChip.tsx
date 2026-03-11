@@ -59,7 +59,7 @@ export function AgentChip({ agentKey, size = 'md', showStatus = false, status = 
         size === 'sm' && 'px-2 py-0.5',
       )}
     >
-      <span aria-hidden="true" className="text-sm leading-none">{agent.emoji}</span>
+      <span role="img" aria-label={`${agent.name} agent`} className="text-sm leading-none">{agent.emoji}</span>
       <span className="leading-none">{agent.name}</span>
       {showStatus && (
         <span

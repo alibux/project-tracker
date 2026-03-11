@@ -107,9 +107,9 @@ export function KanbanBoard({ projectId, sprintId, onAddTask, onTaskClick, agent
 
   if (isLoading) {
     return (
-      <div className="flex gap-4 p-6 overflow-x-auto">
+      <div className="flex flex-col md:flex-row gap-4 p-6 overflow-x-auto">
         {COLUMNS.map((col) => (
-          <div key={col} className="w-72 shrink-0 rounded-xl bg-slate-100 h-48 animate-pulse" />
+          <div key={col} className="w-full md:w-72 shrink-0 rounded-xl bg-slate-100 h-48 animate-pulse" />
         ))}
       </div>
     )
@@ -128,7 +128,7 @@ export function KanbanBoard({ projectId, sprintId, onAddTask, onTaskClick, agent
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 p-6 overflow-x-auto h-full">
+      <div className="flex flex-col md:flex-row gap-4 p-6 overflow-x-auto md:overflow-x-auto h-full">
         {COLUMNS.map((col) => (
           <BoardColumn
             key={col}

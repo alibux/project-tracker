@@ -32,18 +32,20 @@ export function TaskCard({ task, onClick, onDelete, isDragging = false }: TaskCa
       style={style}
       className={cn(
         'group relative rounded-lg border border-slate-200 bg-white p-3 shadow-sm cursor-pointer select-none',
-        'hover:border-slate-300 hover:shadow-md transition-all',
+        'hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5 transition-all duration-150',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1',
         dragging && 'opacity-50 shadow-lg ring-2 ring-blue-400',
       )}
       onClick={onClick}
+      aria-grabbed={dragging}
       {...attributes}
       {...listeners}
     >
       {/* Title */}
-      <p className="text-sm font-medium text-slate-800 leading-snug mb-2 pr-6">{task.title}</p>
+      <p className="text-sm font-medium text-slate-800 leading-snug mb-2 pr-6 min-w-0">{task.title}</p>
 
       {/* Badges row */}
-      <div className="flex flex-wrap items-center gap-1">
+      <div className="flex flex-wrap items-center gap-1 min-w-0">
         {task.assigneeAgentKey && (
           <AgentChip agentKey={task.assigneeAgentKey} size="sm" />
         )}
@@ -78,7 +80,7 @@ export function TaskCard({ task, onClick, onDelete, isDragging = false }: TaskCa
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <button
-            className="absolute top-2 right-2 rounded p-0.5 text-slate-300 opacity-0 group-hover:opacity-100 hover:bg-slate-100 hover:text-slate-600 transition-all"
+            className="absolute top-2 right-2 rounded p-0.5 text-slate-300 opacity-0 group-hover:opacity-100 hover:bg-slate-100 hover:text-slate-600 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:opacity-100"
             onClick={(e) => e.stopPropagation()}
             aria-label="Task actions"
           >

@@ -13,7 +13,7 @@ export function AlfredStrip({ summary }: AlfredStripProps) {
   if (activeTasks === 0 || activeAgentNames.length === 0) {
     return (
       <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 mb-3 text-sm text-slate-500">
-        🦞 Alfred — system idle
+        <span role="img" aria-label="Alfred, orchestrator agent">🦞</span> Alfred — system idle
       </div>
     )
   }
@@ -24,7 +24,7 @@ export function AlfredStrip({ summary }: AlfredStripProps) {
 
   return (
     <div className="rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2 mb-3 text-sm text-indigo-700">
-      🦞 Alfred coordinating {activeTasks} active task{activeTasks !== 1 ? 's' : ''} across {namesText}.
+      <span role="img" aria-label="Alfred, orchestrator agent">🦞</span> Alfred coordinating {activeTasks} active task{activeTasks !== 1 ? 's' : ''} across {namesText}.
     </div>
   )
 }
