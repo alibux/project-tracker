@@ -274,4 +274,96 @@ public class TasksControllerTests : IDisposable
         Assert.Equal("Done", moved.Column);
         Assert.Equal(2000, moved.Position); // appended after existing at 1000
     }
+
+    // -------------------------------------------------------------------------
+    // PATCH /api/tasks/{id}  (partial update)
+    // -------------------------------------------------------------------------
+
+    [Fact]
+    public async Task Patch_UpdatesOnlySuppliedFields_LeavesOthersUnchanged()
+    {
+        var project = await SeedProject();
+        var task = await SeedTask(project.Id);
+
+        // Set initial agent fields via PUT so we have a baseline
+        await _controller.Update(task.Id, new UpdateTaskDto
+        {
+            Title = task.Title,
+            Priority = task.Priority,
+            Type = task.Type,
+            Column = task.Column,
+            AssigneeAgentKey = "backend",
+            AssigneeAgentName = "Bastion",
+            AssigneeAgentEmoji = "🏰",
+            ActivityStatus = "idle"
+        });
+
+        // PATCH only ActivityStatus
+        var result = await _controller.Patch(task.Id, new PatchTaskDto
+        {
+            ActivityStatus = "active"
+        });
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var patched = Assert.IsType<TaskDto>(ok.Value);
+
+        Assert.Equal("active", patched.ActivityStatus);
+        // Other agent fields unchanged
+        Assert.Equal("backend", patched.AssigneeAgentKey);
+        Assert.Equal("Bastion", patched.AssigneeAgentName);
+        Assert.Equal("🏰", patched.AssigneeAgentEmoji);
+        // Core fields unchanged
+        Assert.Equal(task.Title, patched.Title);
+        Assert.Equal(task.Column, patched.Column);
+    }
+
+    [Fact]
+    public async Task Patch_OnDoneTask_Returns200()
+    {
+        var project = await SeedProject();
+        var task = await SeedTask(project.Id);
+
+        // Move to Done
+        await _controller.Move(task.Id, new MoveTaskDto { Column = "Done" });
+
+        // PATCH on Done task should succeed
+        var result = await _controller.Patch(task.Id, new PatchTaskDto
+        {
+            ActivityStatus = "idle",
+            LastAgentUpdateText = "Complete"
+        });
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var patched = Assert.IsType<TaskDto>(ok.Value);
+        Assert.Equal("Done", patched.Column);
+        Assert.Equal("idle", patched.ActivityStatus);
+        Assert.Equal("Complete", patched.LastAgentUpdateText);
+    }
+
+    [Fact]
+    public async Task Patch_NonExistentTask_Returns404()
+    {
+        var result = await _controller.Patch(Guid.NewGuid(), new PatchTaskDto
+        {
+            ActivityStatus = "active"
+        });
+
+        var notFound = Assert.IsType<NotFoundObjectResult>(result);
+        var problem = Assert.IsType<ProblemDetails>(notFound.Value);
+        Assert.Equal(404, problem.Status);
+    }
+
+    [Fact]
+    public async Task Patch_AllNulls_IsNoOp_Returns200()
+    {
+        var project = await SeedProject();
+        var task = await SeedTask(project.Id);
+
+        var result = await _controller.Patch(task.Id, new PatchTaskDto());
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var patched = Assert.IsType<TaskDto>(ok.Value);
+        Assert.Equal(task.Id, patched.Id);
+        Assert.Equal(task.Title, patched.Title);
+    }
 }
