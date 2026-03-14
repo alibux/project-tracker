@@ -197,6 +197,36 @@ public class TasksController : ControllerBase
     }
 
     // -------------------------------------------------------------------------
+    // PATCH /api/tasks/{id}  (partial field update — agent metadata)
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Partially update agent-metadata fields on a task.
+    /// Only non-null fields in the request body are applied.
+    /// Works on tasks in any column, including Done.
+    /// </summary>
+    [HttpPatch("{id:guid}")]
+    [ProducesResponseType(typeof(TaskDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Patch(Guid id, [FromBody] PatchTaskDto dto)
+    {
+        var task = await _db.Tasks.FindAsync(id);
+        if (task is null)
+            return NotFound(BuildProblem(404, "Task not found", $"No task with id '{id}' exists."));
+
+        if (dto.AssigneeAgentKey is not null) task.AssigneeAgentKey = dto.AssigneeAgentKey.Trim();
+        if (dto.AssigneeAgentName is not null) task.AssigneeAgentName = dto.AssigneeAgentName.Trim();
+        if (dto.AssigneeAgentEmoji is not null) task.AssigneeAgentEmoji = dto.AssigneeAgentEmoji.Trim();
+        if (dto.ActivityStatus is not null) task.ActivityStatus = dto.ActivityStatus.Trim();
+        if (dto.LastAgentUpdateText is not null) task.LastAgentUpdateText = dto.LastAgentUpdateText.Trim();
+        if (dto.LastAgentUpdateAt is not null) task.LastAgentUpdateAt = dto.LastAgentUpdateAt;
+
+        await _db.SaveChangesAsync();
+
+        return Ok(MapToDto(task));
+    }
+
+    // -------------------------------------------------------------------------
     // PATCH /api/tasks/{id}/move
     // -------------------------------------------------------------------------
 

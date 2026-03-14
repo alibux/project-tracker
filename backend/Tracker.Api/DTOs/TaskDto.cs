@@ -89,6 +89,20 @@ public class UpdateTaskDto
 }
 
 /// <summary>
+/// Request DTO for partial field updates (agent metadata only).
+/// Only non-null fields are applied.
+/// </summary>
+public class PatchTaskDto
+{
+    public string? AssigneeAgentKey { get; set; }
+    public string? AssigneeAgentName { get; set; }
+    public string? AssigneeAgentEmoji { get; set; }
+    public string? ActivityStatus { get; set; }
+    public string? LastAgentUpdateText { get; set; }
+    public DateTime? LastAgentUpdateAt { get; set; }
+}
+
+/// <summary>
 /// Request DTO for the PATCH move operation.
 /// </summary>
 public class MoveTaskDto
